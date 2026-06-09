@@ -1,0 +1,1300 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>A Self-Bootstrapping Fabricator for Asteroid Resources</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <link rel="stylesheet" href="" />
+<style>
+body {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 17px;
+  line-height: 1.7;
+  max-width: 860px;
+  margin: 40px auto;
+  padding: 0 24px;
+  color: #1a1a1a;
+  background: #fafafa;
+}
+h1 { font-size: 2em; margin-top: 1.2em; border-bottom: 2px solid #333; padding-bottom: 0.3em; }
+h2 { font-size: 1.5em; margin-top: 1.8em; border-bottom: 1px solid #aaa; padding-bottom: 0.2em; }
+h3 { font-size: 1.15em; margin-top: 1.4em; color: #333; }
+nav#TOC { background: #f0f0f0; border: 1px solid #ccc; padding: 16px 24px; margin-bottom: 2em; border-radius: 4px; }
+nav#TOC ul { margin: 0; padding-left: 1.4em; }
+nav#TOC li { margin: 4px 0; }
+nav#TOC a { color: #333; text-decoration: none; }
+nav#TOC a:hover { text-decoration: underline; }
+p { margin: 0.9em 0; }
+ul, ol { margin: 0.8em 0; padding-left: 2em; }
+li { margin: 0.3em 0; }
+strong { color: #111; }
+hr { border: none; border-top: 1px solid #ccc; margin: 2em 0; }
+blockquote { border-left: 3px solid #aaa; margin: 1em 2em; padding-left: 1em; color: #444; font-style: italic; }
+code { font-family: monospace; background: #eee; padding: 1px 4px; border-radius: 2px; }
+a { color: #1a5276; }
+a:hover { color: #2980b9; }
+@media (max-width: 600px) { body { font-size: 15px; margin: 16px auto; } }
+</style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">A Self-Bootstrapping Fabricator for Asteroid
+Resources</h1>
+</header>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#a-self-bootstrapping-fabricator-for-asteroid-resources"
+id="toc-a-self-bootstrapping-fabricator-for-asteroid-resources">A
+Self-Bootstrapping Fabricator for Asteroid Resources</a>
+<ul>
+<li><a href="#concept-document-v1.1"
+id="toc-concept-document-v1.1">Concept Document v1.1</a></li>
+<li><a href="#preface" id="toc-preface">Preface</a></li>
+<li><a href="#abstract" id="toc-abstract">Abstract</a></li>
+<li><a href="#introduction-the-bootstrap-problem"
+id="toc-introduction-the-bootstrap-problem">1. Introduction — The
+Bootstrap Problem</a></li>
+<li><a href="#body-selection-s-type-chondritic"
+id="toc-body-selection-s-type-chondritic">2. Body Selection — S-type
+Chondritic</a></li>
+<li><a href="#the-material-palette" id="toc-the-material-palette">3. The
+Material Palette</a></li>
+<li><a href="#process-infrastructure" id="toc-process-infrastructure">4.
+Process Infrastructure</a></li>
+<li><a href="#surface-and-orbital-architecture"
+id="toc-surface-and-orbital-architecture">5. Surface and Orbital
+Architecture</a></li>
+<li><a href="#the-semiconductor-path" id="toc-the-semiconductor-path">6.
+The Semiconductor Path</a></li>
+<li><a href="#energy-generation-storage-and-management"
+id="toc-energy-generation-storage-and-management">7. Energy —
+Generation, Storage, and Management</a></li>
+<li><a href="#the-fleet-architecture" id="toc-the-fleet-architecture">8.
+The Fleet Architecture</a></li>
+<li><a href="#communication-architecture"
+id="toc-communication-architecture">9. Communication
+Architecture</a></li>
+<li><a href="#unresolved-details-a-general-principle"
+id="toc-unresolved-details-a-general-principle">10. Unresolved Details —
+A General Principle</a></li>
+<li><a href="#the-closure-map" id="toc-the-closure-map">11. The Closure
+Map</a></li>
+<li><a href="#open-engineering-questions"
+id="toc-open-engineering-questions">12. Open Engineering
+Questions</a></li>
+<li><a href="#beyond-the-pioneer-a-trading-network"
+id="toc-beyond-the-pioneer-a-trading-network">13. Beyond the Pioneer — A
+Trading Network</a></li>
+<li><a href="#conclusion-space-as-a-designed-environment"
+id="toc-conclusion-space-as-a-designed-environment">14. Conclusion —
+Space as a Designed Environment</a></li>
+<li><a href="#appendix-the-minimum-seed-payload"
+id="toc-appendix-the-minimum-seed-payload">Appendix — The Minimum Seed
+Payload</a></li>
+<li><a href="#change-log" id="toc-change-log">Change Log</a></li>
+</ul></li>
+</ul>
+</nav>
+<h1 id="a-self-bootstrapping-fabricator-for-asteroid-resources">A
+Self-Bootstrapping Fabricator for Asteroid Resources</h1>
+<h2 id="concept-document-v1.1">Concept Document v1.1</h2>
+<p><em>Gregory Eckersley and Claude — June 2026</em></p>
+<hr />
+<h2 id="preface">Preface</h2>
+<p>This document is a technical appendix to the Space Accord governance
+work published at spaceaccord.org. It exists to answer a specific
+question: is the capability that the governance argument is about
+actually feasible?</p>
+<p>The answer developed here is yes — more feasibly than intuition
+suggests, and sooner than most people expect.</p>
+<p>The core of the argument can be stated simply. A small
+self-replicating robot with communication and transport capability can
+be established on a well-chosen near-Earth asteroid from a seed payload
+of modest mass, using locally available materials and processes that
+exploit rather than resist the space environment. The combination of
+semiconductor and other electronics enables that capability. The open
+question is not whether it will happen, but why — under what governance,
+directed toward what ends, for whose benefit.</p>
+<p>That question is what spaceaccord addresses. This document provides
+the technical grounding that makes the question urgent rather than
+premature.</p>
+<p>The concept was developed through extended human-AI collaboration —
+Gregory Eckersley directing the investigation, Claude providing
+synthesis across a wide range of disciplines. A differently configured
+AI working from the same summary would likely arrive at a similar or
+better implementation by a different path. That is itself a
+demonstration of how quickly the landscape is changing, and of why the
+governance conversation cannot wait.</p>
+<p>The document is honest about what remains open. The architecture is
+sound. The details will be refined by experiment, by specialist review,
+and by the accumulated work of people who engage with it seriously.
+Contributions and corrections are welcome.</p>
+<p><em>Gregory Eckersley — spaceaccord.org</em> <em>June 2026</em></p>
+<hr />
+<h2 id="abstract">Abstract</h2>
+<p>This document describes a concept for a small, modular,
+self-bootstrapping fabricator intended for deployment on a suitable
+near-Earth asteroid. Starting from a compact seed payload of brought
+components and using locally available asteroid materials, the system is
+designed to progressively close its dependencies on Earth resupply
+through a generational sequence of increasing capability. The central
+argument is that the space environment, properly understood, is not
+hostile to manufacturing — it is a different environment that rewards
+different approaches, and in several respects is actively superior to
+terrestrial conditions for the processes involved. The concept is
+physically grounded, internally consistent, and honest about what
+remains open. No step requires a capability that does not exist or a
+material that is not present. The irreducible import list at maturity is
+small: GaN laser diodes for optical communication, fluorine-bearing
+materials used sparingly, and silicon devices until local semiconductor
+fabrication closes that loop. The concept is optimistic not because the
+engineering is trivial, but because it stands on an immense foundation
+of prior human achievement — and because it is designed from the outset
+to exploit its environment rather than fight it.</p>
+<hr />
+<h2 id="introduction-the-bootstrap-problem">1. Introduction — The
+Bootstrap Problem</h2>
+<p>Any manufacturing capability deployed in a remote environment faces a
+fundamental chicken-and-egg problem. The machines needed to make things
+require components that must themselves be made. On Earth this problem
+is dissolved by the existing industrial ecosystem — any missing
+component can be sourced from somewhere. In a remote space environment
+that ecosystem is absent. The fabricator must, to the greatest extent
+possible, make itself.</p>
+<p>This is not a new problem. Every industrial capability in history
+bootstrapped from something simpler. The first screw-cutting lathe was
+made without a screw-cutting lathe. The first semiconductor fab was
+built with tools that predated semiconductors. The question is not
+whether bootstrap is possible — history shows it always is — but what
+the minimum seed is from which a given capability can grow, and how long
+the generational sequence takes.</p>
+<p>For an asteroid fabricator the bootstrap problem has a specific and
+tractable form. Given a seed payload delivered by a near-term launch
+vehicle, and a well-chosen asteroid body, what industrial capability can
+be established, and over what timeline does it become
+self-sustaining?</p>
+<p>The answer developed in this document is more optimistic than most
+people would expect. The minimum seed is compact. The generational
+sequence is coherent. The residual import dependencies are small. And
+the space environment, far from being an obstacle, contributes
+positively to several of the most critical process steps.</p>
+<h3 id="the-inheritance-of-knowledge">1.1 The inheritance of
+knowledge</h3>
+<p>The seed payload has two components. The first is physical hardware —
+the brought tools, devices, and materials described in the appendix. The
+second is the accumulated scientific and engineering knowledge of
+centuries, which weighs nothing and yet makes the entire project
+conceivable.</p>
+<p>Every process described in this document — zone refining, carbonyl
+chemistry, Fischer-Tropsch synthesis, I²L semiconductor fabrication,
+float-zone crystal growth, optical communication — represents decades of
+work by thousands of researchers and engineers. A reader can easily pass
+over a sentence like “use float-zone refining” without registering that
+it compresses perhaps thirty years of materials science into six words.
+The fabricator does not rediscover these processes. It inherits
+them.</p>
+<p>This distinction matters when assessing the semiconductor section in
+particular. The pioneers of semiconductor technology faced three
+compounded difficulties: understanding the underlying physics,
+developing the process knowledge, and achieving the required process
+control. The first two are now largely solved. A fabricator operating in
+the twenty-first century begins already knowing why contamination at the
+parts-per-billion level matters, why certain crystal orientations are
+preferred, why the indirect bandgap of silicon prevents laser emission,
+and why I²L is suitable for the application. That knowledge was not free
+— it cost generations of effort — but it is now inherited at the
+outset.</p>
+<p>The semiconductor industry did not require fifty years to develop
+because transistor fabrication is intrinsically a fifty-year process. It
+required fifty years because the underlying physics, materials science,
+process techniques, and design methodologies first had to be discovered.
+A fabricator operating today inherits that knowledge from the start.
+That is a very different problem from the one the pioneers faced.</p>
+<p>Biological evolution had to discover everything — metallurgy,
+electricity, semiconductors, optics — from scratch through blind
+variation. The fabricator is not blind. It begins life already
+possessing a vast body of inherited knowledge. In that sense it
+resembles a human civilisation much more than a bacterium.</p>
+<p>This document was itself assembled with the assistance of AI — not
+because AI contributed new scientific knowledge, but because it
+substantially lowered the effort required to reason across disciplines
+that no individual would comfortably span simultaneously: asteroid
+geology, metallurgy, ceramics, vacuum technology, semiconductor physics,
+industrial chemistry, communications engineering, and systems
+architecture. The knowledge originated with generations of human
+researchers. AI helped connect pieces that would otherwise have remained
+scattered. The fabricator concept exists at the intersection of those
+two realities.</p>
+<hr />
+<h2 id="body-selection-s-type-chondritic">2. Body Selection — S-type
+Chondritic</h2>
+<p>The choice of host body is the most consequential decision in the
+concept. It determines what materials are locally available, what the
+thermal and mechanical environment imposes on the fabricator, and which
+process steps can be closed locally versus remaining dependent on
+imports.</p>
+<h3 id="why-not-m-type">2.1 Why not M-type</h3>
+<p>The initial instinct toward a metallic M-type body is understandable
+— abundant iron-nickel, solid and stable, closest composition to the
+structural materials the fabricator needs. Working through the full
+material requirements reveals the limitation. M-type bodies are
+differentiated — the metal and silicate phases separated long ago,
+leaving a body composed almost entirely of the metal fraction. This
+means:</p>
+<ul>
+<li>Oxygen is absent except as trace implants from the solar wind and
+minor oxide inclusions</li>
+<li>Carbon is absent</li>
+<li>Aluminium is absent — it partitioned into the silicate fraction</li>
+<li>Silicon for semiconductor use requires the silicate fraction</li>
+<li>Manganese and zinc — needed for high performance soft ferrite — are
+absent</li>
+<li>Nitrogen is trace at best</li>
+</ul>
+<p>The M-type body gives excellent structural metal and reasonable
+magnetic materials through cobalt ferrite from native oxide inclusions,
+but stalls at the electrical and chemical layers of the industrial
+stack. The concept works on M-type but works considerably better on a
+body with a richer mineral palette.</p>
+<h3 id="the-s-type-chondritic-choice">2.2 The S-type chondritic
+choice</h3>
+<p>Ordinary chondrites of S-type composition are the most abundant
+meteorite class and well represented in the near-Earth asteroid
+population. Crucially, chondritic bodies are undifferentiated — they
+preserve the original solar nebula composition with metal and silicate
+intimately mixed at the grain scale. The mineral assemblage typically
+includes:</p>
+<ul>
+<li>Iron and nickel metal grains — 15-20% by mass, magnetically
+separable</li>
+<li>Olivine and pyroxene — magnesium, silicon, oxygen in abundance</li>
+<li>Feldspar — aluminium, silicon, calcium, potassium, sodium</li>
+<li>Troilite — FeS, the primary sulphide, carrying copper as
+chalcopyrite intergrowths</li>
+<li>Phosphate minerals — a local phosphorus source, critical for
+semiconductor doping</li>
+<li>Trace hydrated silicates — modest water content, a source of oxygen
+and hydrogen</li>
+<li>Carbonaceous impactor material in the regolith — carbon,
+organics</li>
+</ul>
+<p>The single most important element this unlocks compared to M-type is
+aluminium. Its implications run through the entire concept: aluminium
+metal as a conductor superior to iron-nickel; alumina as the premier
+locally synthesisable bearing and insulator ceramic; aluminosilicate
+ceramics — mullite, cordierite — as precision structural materials;
+aluminium as a reducing agent for selective chemical processing.</p>
+<h3 id="size-impact-history-and-physical-properties">2.3 Size, impact
+history, and physical properties</h3>
+<p>A body in the kilometre-scale diameter range has sufficient escape
+velocity to retain ejecta from impacting bodies over geological time,
+accumulating a regolith that samples the broader asteroid population. A
+nominally S-type body of this size carries impactor contributions from
+C-type, M-type, and other S-type bodies in its surface regolith — acting
+as a naturally sorted sample library that concentrates useful trace
+elements the host body’s composition alone would not provide.</p>
+<p>Physical properties of the body bear on the fabricator’s operations
+in ways that go beyond composition:</p>
+<p><strong>Rotation rate</strong> — slow rotation is strongly preferred.
+A rapidly rotating body subjects the surface to large thermal swings at
+high frequency, driving thermal stress in precision structures and
+complicating solar energy harvesting. A body with a rotation period of
+hours to days rather than minutes allows the fabricator to track the sun
+and manage thermal transitions gracefully.</p>
+<p><strong>Surface gravity</strong> — a body with slight but real
+surface gravity simplifies anchoring and surface operations considerably
+compared to a true microG body where every mechanical operation risks
+pushing the lander off the surface. A body of one to several kilometres
+diameter has surface gravity of millimetres per second squared —
+negligible for most purposes but sufficient to keep objects and regolith
+grains settled.</p>
+<p><strong>Surface cohesion</strong> — this is one of the least well
+characterised and most operationally critical properties of small
+bodies. Missions to Ryugu and Bennu found surfaces considerably more
+unconsolidated than anticipated — rubble piles with very low surface
+strength, behaving more like loose aggregate than solid rock. A crumbly
+surface makes mining easier but anchoring harder, raises dust management
+as a serious concern, and complicates any operation that needs to react
+forces against the ground. Surface cohesion is an explicit body
+selection criterion and a primary target for precursor
+characterisation.</p>
+<p><strong>Stability</strong> — the full problem of surface stability,
+anchoring design, reaction force management during mechanical
+operations, and long-term evolution of the installation is a major
+engineering domain in its own right and outside the scope of this
+concept document. It requires dedicated investigation. The body
+selection criteria — slight gravity, slow rotation, some consolidated
+rock available — reduce the severity of the problem without resolving
+it.</p>
+<p>The target body is therefore a kilometre-scale or larger S-type
+chondritic NEA, slowly rotating, with slight surface gravity, a
+well-developed regolith, in a low delta-v orbit from LEO — ideally under
+6 km/s — and with confirmed or plausible compositional diversity from a
+long collision history. Detailed characterisation of composition,
+rotation, surface cohesion, and surface properties should precede
+commitment of the fabricator payload. Each target body will have unique
+properties requiring body-specific planning — a generalised architecture
+can be designed on Earth, but implementation decisions must be made
+locally in response to what characterisation reveals.</p>
+<hr />
+<h2 id="the-material-palette">3. The Material Palette</h2>
+<p>Working through the fabricator’s actual material requirements against
+the S-type chondritic composition produces the following palette.</p>
+<h3 id="structural-metal">3.1 Structural metal</h3>
+<p>Iron-nickel alloy from magnetic separation of the metal fraction.
+Abundant, directly accessible by mechanical processing without high
+temperature chemistry. The natural Fe-Ni ratio in chondritic metal
+fraction approximates permalloy compositions — around 30-40% nickel —
+which has significantly better soft magnetic properties than pure iron.
+Useful directly for structural components, motor cores, and transformer
+cores.</p>
+<p>Carbon steel — iron with carbon addition from the carbonaceous
+regolith fraction, heat treated under the solar concentrator — extends
+the mechanical property range, providing harder and tougher variants for
+tooling, spring stock, and bearing races.</p>
+<h3 id="conductors">3.2 Conductors</h3>
+<p>Aluminium is the primary conductor. Extracted from feldspar by
+aluminothermic or electrolytic reduction, drawable into fine wire, with
+resistivity roughly 1.6 times that of copper — a modest penalty
+tolerable given the system’s low clock rates and modest power levels.
+Used for motor windings, transformer windings, bus bars, interconnects,
+and capacitor electrodes.</p>
+<p>Silver is present in the metal fraction as a siderophile element,
+enriched relative to bulk solar system composition. Concentrations are
+low — tens to hundreds of ppm — but consumption at the fabricator’s
+scale is similarly low. Silver wire for the most demanding conductor
+applications is achievable from local material.</p>
+<p>Iron-nickel wire remains available for applications where
+conductivity is less critical than strength or magnetic properties.</p>
+<p>Copper is present primarily in sulphide phases as chalcopyrite
+intergrowths with troilite. Extraction requires roasting and smelting —
+several process steps. Given aluminium’s adequacy as a conductor, copper
+refining is not worth the infrastructure investment except for catalyst
+applications where native copper grains — present at trace levels in the
+metal fraction — may suffice.</p>
+<h3 id="magnetic-materials">3.3 Magnetic materials</h3>
+<p>Soft magnetics — permalloy from the natural Fe-Ni composition of the
+metal fraction, and carbonyl iron powder composite from the carbonyl
+processing infrastructure. Carbonyl iron powder — pure, fine, spherical
+— forms low eddy-current soft magnetic composites when sintered or
+bound, providing adequate performance for motor cores and transformer
+cores at the operating frequencies of the system.</p>
+<p>Hard magnetics — cobalt ferrite (CoFe₂O₄) sintered from iron oxide
+and cobalt under the solar concentrator. Adequate permanent magnet
+performance for motors and sensors. Not rare-earth grade, but
+sufficient.</p>
+<h3 id="insulators-and-ceramics">3.4 Insulators and ceramics</h3>
+<p>Silicon dioxide — abundant from silicate mineral processing.
+Solar-fused into glass for fibre insulation, sheet, rod, and tube. The
+most immediately accessible insulating material.</p>
+<p>Alumina (Al₂O₃) — synthesised from local aluminium by oxidation and
+sintering. Hardness of 9 Mohs, excellent electrical insulator,
+chemically inert, dimensionally stable. The primary precision insulator
+and bearing material once aluminium processing is established.</p>
+<p>Aluminosilicate ceramics — mullite and cordierite form naturally when
+aluminium silicate minerals are heated. Cordierite has exceptionally low
+thermal expansion, valuable for precision structures — ion beam column
+components, positioning stage elements — that must maintain dimension
+through thermal cycling.</p>
+<p>Silicon carbide — synthesised from local silicon and carbon under the
+solar concentrator. Useful as a structural ceramic and as an abrasive
+for lapping and polishing alumina bearing surfaces. The abrasive supply
+chain is local — SiC abrasive laps alumina surfaces, alumina abrasive
+laps SiC surfaces.</p>
+<p>Silicon nitride — requires nitrogen, present in regolith at trace
+concentrations from solar wind implantation and nitride mineral phases
+in impactor material. Conditional on nitrogen availability, Si₃N₄
+provides excellent bearing and insulator performance. The alumina route
+is the more confident primary path.</p>
+<h3 id="polymers-and-organics">3.5 Polymers and organics</h3>
+<p>Fischer-Tropsch synthesis — carbon monoxide from local carbon and
+oxygen, hydrogen from hydrated silicate electrolysis, iron catalyst from
+the metal fraction — produces hydrocarbon feedstocks from CO and H₂.
+Products include:</p>
+<ul>
+<li>Polyethylene and polypropylene — wire insulation coating, flexible
+tubing, capacitor dielectric film</li>
+<li>Wax fractions — low vapour pressure lubricant for protected bearing
+environments</li>
+<li>Solvent fractions — process cleaning</li>
+</ul>
+<p>Chlorocarbon variants — PVC, chlorinated paraffins — from local
+chlorine produced by electrolysis of chloride-bearing mineral phases.
+Chlorocarbons cover higher temperature and chemically more demanding
+insulation applications.</p>
+<p>Silicones — polysiloxane backbone from local silicon and oxygen,
+methyl side groups from Fischer-Tropsch methane plus local chlorine via
+the Müller-Rochow process. Silicone oils provide vacuum-compatible
+lubrication with exceptional temperature range. Silicone rubbers provide
+compliant seals for repeated-assembly joints, flexible electrical
+insulation, and potting compound for electronics packages. Silicone RTV
+adhesive bonds ceramics to metals across thermal expansion mismatch. The
+Müller-Rochow process requires a copper catalyst — present in trace
+native form in the metal fraction, potentially adequate for catalyst
+quantities without a full copper refining infrastructure. Pi-conjugate
+conducting polymers are not pursued — the synthesis is demanding,
+monomer purity critical, and the application need is covered by simpler
+routes.</p>
+<h3 id="fluorine-use-sparingly">3.6 Fluorine — use sparingly</h3>
+<p>Fluorine is the one element the S-type chondritic body does not
+provide in useful quantity. Fluorapatite — Ca₅(PO₄)₃F — is the primary
+fluorine-bearing mineral in chondrites, present at tens to hundreds of
+ppm. Real but thin.</p>
+<p>PTFE is used where nothing else adequately serves: the most demanding
+gas-phase process containment, ultra-high vacuum seals where metallic
+knife-edge seals cannot be used, and applications requiring both
+chemical resistance and flexibility simultaneously.</p>
+<p>The design discipline is to ask for each application whether fluorine
+is genuinely necessary or merely convenient, and to route to alternative
+materials — metallic seals, silicone rubber, alumina — wherever they
+adequately serve. A modest PTFE allocation in the seed payload,
+supplemented by locally extracted fluorine as the ecosystem matures,
+covers the lifetime requirement.</p>
+<h3 id="lubricants">3.7 Lubricants</h3>
+<p>MoS₂ or WS₂ dry film — space-qualified, vacuum-compatible, brought as
+a coating on precision bearing surfaces in the seed payload. MoS₂
+performs better in vacuum than in air — the oxide layer that causes wear
+in terrestrial use does not form.</p>
+<p>Silicone oil — locally synthesised, extremely low vapour pressure,
+stable across the asteroid thermal range. Used in protected bearing
+environments sealed from direct vacuum exposure by labyrinth or thin
+metallic shields.</p>
+<p>Fischer-Tropsch wax fractions — for low-demand lubrication in
+partially enclosed environments.</p>
+<hr />
+<h2 id="process-infrastructure">4. Process Infrastructure</h2>
+<p>The fabricator’s processes divide into thermal, mechanical, and
+chemical operations. Thermal processes are powered by solar
+concentration, mechanical processes by local servo-driven machinery, and
+chemical processes by the contained reactor infrastructure.</p>
+<h3 id="solar-concentrator">4.1 Solar concentrator</h3>
+<p>A parabolic reflector formed from local metal sheet, with a secondary
+focus for high-temperature applications. In vacuum, temperatures above
+2000°C are achievable with modest concentrator area. This covers:</p>
+<ul>
+<li>Silicon carbide synthesis (~1500°C)</li>
+<li>Ferrite sintering (~1200°C)</li>
+<li>Glass melting (~1400°C)</li>
+<li>Alumina sintering (~1600°C)</li>
+<li>Metal annealing (~800-1000°C)</li>
+<li>Zone refining (~1420°C for silicon)</li>
+</ul>
+<p>The concentrator mirror is a shared module in the fleet architecture
+— see section 7.</p>
+<h3 id="carbonyl-processing">4.2 Carbonyl processing</h3>
+<p>Nickel tetracarbonyl Ni(CO)₄ forms when nickel metal contacts carbon
+monoxide at around 50-60°C and decomposes to pure nickel metal at around
+180°C. Iron pentacarbonyl Fe(CO)₅ follows similar chemistry. Carbon
+monoxide is synthesised from local carbon and oxygen.</p>
+<p>The carbonyl process provides:</p>
+<ul>
+<li>Selective extraction and purification of nickel from Fe-Ni
+alloy</li>
+<li>Carbonyl nickel and iron powder — pure, fine, spherical, with
+excellent soft magnetic composite properties</li>
+<li>Thermal deposition of nickel onto shaped mandrels — producing
+seamless tubing, conformal coatings, and nickel mesh by deposition onto
+sacrificial templates</li>
+<li>Nickel electrode metallisation of ceramic components</li>
+</ul>
+<p>The toxicity of Ni(CO)₄ in an autonomous robotic system operating in
+hard vacuum is an engineering containment problem rather than a
+personnel safety problem — any leak disperses into vacuum and decomposes
+rapidly. The process vessel, PTFE-sealed and nickel-lined, handles the
+process streams safely.</p>
+<p>The carbonyl reactor infrastructure — contained gas-phase processing
+with recirculating carrier gas — transfers directly to Fischer-Tropsch
+synthesis and partial silicon refining chemistry. One infrastructure
+investment serves multiple process needs.</p>
+<h3 id="fischer-tropsch-synthesis">4.3 Fischer-Tropsch synthesis</h3>
+<p>CO and H₂ over an iron catalyst at moderate temperature and pressure
+produce hydrocarbons from methane upward. The catalyst is local iron.
+The reactor infrastructure is shared with the carbonyl process. Products
+feed the polymer synthesis chain and provide lubricant fractions.</p>
+<h3 id="silicone-synthesis">4.4 Silicone synthesis</h3>
+<p>Müller-Rochow process: silicon metal reacts with methyl chloride over
+a copper catalyst at 250-300°C to produce chlorosilane intermediates,
+hydrolysed and polymerised to silicone. Methyl chloride from
+Fischer-Tropsch methane plus local chlorine. Copper catalyst from native
+copper grains in the metal fraction.</p>
+<h3 id="regolith-processing">4.5 Regolith processing</h3>
+<p>Chondritic texture means physical separation at room temperature is
+effective:</p>
+<ul>
+<li>Magnetic separation — concentrates the metal fraction</li>
+<li>Density separation — separates sulphide concentrate from silicate
+gangue</li>
+<li>Electrostatic separation — exploits conductivity differences between
+mineral phases</li>
+</ul>
+<p>Roasting the sulphide concentrate produces sulphur dioxide —
+capturable and convertible to sulphuric acid, opening an electrolytic
+processing capability. The silicate fraction feeds ceramic synthesis.
+The carbonaceous fraction feeds Fischer-Tropsch. The regolith is a
+mineral library that rewards careful sorting.</p>
+<hr />
+<h2 id="surface-and-orbital-architecture">5. Surface and Orbital
+Architecture</h2>
+<h3 id="the-surface-orbit-trade">5.1 The surface-orbit trade</h3>
+<p>A significant architectural choice is whether processing occurs on
+the surface of the asteroid or on an orbiting platform, with raw
+material transported from surface to orbit. This trade space deserves
+explicit consideration because the right answer depends heavily on the
+specific body’s properties — and different bodies will warrant different
+answers.</p>
+<p><strong>The surface installation</strong> — all operations on the
+asteroid surface — is the simpler deployment. No orbital mechanics to
+manage, no mass transport system required, and the installation can grow
+by physically extending itself across the surface. The disadvantage is
+that precision processing must coexist with mining dust, thermal cycling
+driven by the body’s rotation, and the continuous challenge of reacting
+mechanical forces against a surface of uncertain cohesion.</p>
+<p><strong>The orbital processor</strong> — mining and initial sorting
+on the surface, precision processing on an orbiting platform — separates
+the dirty and clean operations architecturally rather than by industrial
+zoning on the surface. The orbital environment offers continuous solar
+power unobstructed by the body, a stable thermal environment
+controllable by platform orientation, no dust from surface operations,
+and no anchoring forces. The solar concentrator always points at the
+sun. The communication relay is naturally co-located. Contamination from
+one process module does not reach another without deliberate
+connection.</p>
+<p>For a body with sufficient surface cohesion, a mass driver, pneumatic
+launcher, or mechanical sling can loft sorted material to orbit at
+negligible energy cost — escape velocity for a kilometre-scale body is
+of order 0.5-1 m/s. The launched containers are caught by the orbiter
+with a simple electromagnetic or mechanical catcher. The return path —
+waste material or processed products to the surface — is equally
+trivial.</p>
+<p>For a crumbly, unconsolidated body the orbital architecture becomes
+more compelling still. The surface installation is reduced to the
+simplest possible operation — scoop and loft — which imposes minimal
+reaction forces against weak regolith. All precision work moves to orbit
+where surface properties are irrelevant. Mining dust stays on the
+surface. The precision platform remains pristine.</p>
+<p>The orbital platform also has a natural stability challenge — small
+body gravitational fields are irregular, and solar radiation pressure is
+significant relative to weak gravity. Orbital stability requires
+analysis for each specific body and modest continuous station-keeping.
+Retrograde orbits are often more stable around small bodies.</p>
+<p>The surface and orbital approaches are not mutually exclusive. A
+mature installation may operate both — surface processing for bulk
+material reduction, orbital platform for precision semiconductor and
+assembly work — with the boundary between them determined by the
+cleanliness and stability requirements of each process.</p>
+<p><strong>The industrial zoning principle</strong> — that dirty mining
+operations should be separated from precision manufacturing — applies
+whether the separation is achieved by distance on the surface or by the
+vacuum between surface and orbit. The orbital architecture resolves it
+most cleanly. In either case, vacuum actually assists contamination
+management because contaminants travel ballistic paths rather than
+mixing everywhere by atmospheric turbulence. The source of a
+contamination event is identifiable and the affected zone is predictable
+— an advantage that air-based manufacturing does not enjoy.</p>
+<h3 id="body-specific-planning-and-local-ai">5.2 Body-specific planning
+and local AI</h3>
+<p>Each target body is unique. The specific combination of composition,
+surface cohesion, rotation rate, dust behaviour, orbital stability, and
+regolith depth cannot be fully characterised before arrival, and even a
+thorough precursor mission will leave uncertainties that only operations
+resolve. A generalised architecture can be designed on Earth, but
+implementation decisions must be made locally and adaptively.</p>
+<p>With an eight-minute one-way light delay, Earth cannot be in
+operational decision loops. By the time Earth receives a report that the
+surface is more unconsolidated than anticipated and formulates revised
+instructions, the situation has evolved. The system must reason locally
+about its own situation and adapt its plan accordingly.</p>
+<p>This requirement goes beyond the module-level linguistic capability
+described in section 7 — individual modules negotiating resource
+allocation and reporting faults within a known operational envelope.
+Body-specific planning requires engineering judgement: examining what
+the characterisation data actually shows, identifying where the standard
+architecture needs modification for this specific body, generating and
+evaluating alternatives, and implementing a revised plan.</p>
+<p>For example: surface cohesion insufficient for a surface-mounted mass
+driver — shift to orbital processing with pneumatic launch, or redesign
+the surface installation to distribute reaction forces over a larger
+footprint. Or: regolith carbon content lower than assumed — reduce
+Fischer-Tropsch reactor scale and increase brought polymer stock. Or:
+rotation rate faster than selection criteria specified — add active
+solar tracking to the concentrator design. None of these decisions are
+in a lookup table. They require understanding the system’s own
+architecture well enough to reason about trade-offs under changed
+conditions.</p>
+<p>This is precisely where local AI becomes a structural necessity
+rather than a convenience. The supervisory layer must carry genuine
+engineering reasoning capability — sufficient to plan and adapt the
+system’s own development in response to what it finds. This is also
+where the design of that AI becomes a governance question, not merely an
+engineering one. A supervisory AI that can explain its decisions — that
+can report to Earth why it chose the orbital architecture for this body,
+what alternatives it considered, and what it expects the consequences to
+be — is auditable and accountable in a way that a black-box autonomous
+system is not. That transparency is not optional for a long-lived
+autonomous system operating far from human oversight. It is the
+foundation on which trust between the system and its human principals is
+built.</p>
+<hr />
+<h2 id="the-semiconductor-path">6. The Semiconductor Path</h2>
+<p>Local semiconductor fabrication is the most ambitious element of the
+concept and the one that takes the longest to close. It is important to
+distinguish two separate closure milestones that may be separated by
+decades:</p>
+<p><strong>Industrial closure</strong> — the fabricator can produce its
+own structural metal, conductors, magnetics, insulators, bearings,
+polymers, motors, and mechanical systems without Earth resupply. This
+milestone is achievable relatively early in the generational sequence,
+probably within the first few generations of the system.</p>
+<p><strong>Semiconductor closure</strong> — the fabricator can produce
+its own silicon devices. This is a substantially harder milestone
+requiring the full semiconductor path described below. It should not be
+assumed to follow quickly from industrial closure. The two may be
+separated by a generation or more of operation during which imported
+silicon devices continue to serve the control and computing
+functions.</p>
+<p>This distinction matters for planning. The concept does not require
+semiconductor closure to be useful or to begin generating value. A
+system that has achieved industrial closure is already capable of
+building and maintaining its own mechanical infrastructure, producing
+local materials, and assembling electronics from imported silicon.
+Semiconductor closure is the final and most ambitious loop to close, not
+a prerequisite for everything else.</p>
+<h3 id="silicon-feedstock">6.1 Silicon feedstock</h3>
+<p>Metallurgical grade silicon by carbothermic reduction of silicate
+minerals at 1500°C under the solar concentrator. Purity approximately
+98-99%.</p>
+<h3 id="zone-refining-in-microg">6.2 Zone refining in microG</h3>
+<p>Float zone refining in the microG environment is superior to its
+terrestrial equivalent:</p>
+<ul>
+<li>No gravity-driven convection in the melt — the zone is quiescent,
+diffusion-limited, segregation sharper, fewer passes needed</li>
+<li>Surface tension holds the molten zone without fighting gravity —
+zone geometry more controllable</li>
+<li>No crucible — silicon never contacts a vessel, eliminating the
+primary contamination route of Czochralski growth. No oxygen
+incorporation.</li>
+<li>The rod can be oriented arbitrarily</li>
+</ul>
+<p>The known limitation is the segregation coefficient of boron and
+phosphorus — both close to unity, meaning zone refining removes them
+slowly. These set a floor on background doping. The phosphate minerals
+in S-type chondrite provide a local phosphorus source of known
+composition — the background can be characterised and accommodated as a
+design constraint rather than an unknown.</p>
+<h3 id="surface-preparation">6.3 Surface preparation</h3>
+<p>Silicon forms a native oxide within seconds of exposure to any
+oxygen-containing environment. This must be removed before doping,
+contact deposition, or any process step requiring clean silicon.
+Vacuum-compatible alternatives to hydrofluoric acid etching are
+available and in some respects superior:</p>
+<p><strong>Hydrogen passivation</strong> — atomic hydrogen at moderate
+temperature replaces the native oxide with a hydrogen-terminated surface
+stable in vacuum. No fluorine required. Leaves lower defect density than
+acid etching.</p>
+<p><strong>Thermal desorption</strong> — heating above approximately
+900°C in ultra-high vacuum drives off the native oxide. The zone
+refining apparatus can be adapted for this function.</p>
+<p><strong>Ion beam cleaning</strong> — low energy argon bombardment
+from the ion column removes surface oxide by sputtering. Same tool as
+doping, different operating conditions.</p>
+<p><strong>Chlorine reactive etching</strong> — silicon etches in
+chlorine gas producing volatile SiCl₄. Local chlorine from electrolysis
+of chloride-bearing minerals feeds a contained etch reactor using shared
+infrastructure. Pattern-selective etching is possible using local oxide
+or nitride films as masks.</p>
+<p><strong>Controlled thermal oxidation</strong> — deliberate growth of
+SiO₂ at defined thickness for gate dielectric and capacitor dielectric
+applications.</p>
+<p>Bond pad surfaces in the WCB assembly process are cleaned by low
+energy ion beam immediately before bonding, replacing the flux function
+of terrestrial soldering entirely.</p>
+<h3 id="direct-write-ion-beam-doping">6.4 Direct write ion beam
+doping</h3>
+<p>Lithography is avoided entirely. Spatially defined doped regions are
+created by direct write with a focused ion beam of dopant species — the
+scan pattern defines the device geometry with no mask, no photoresist,
+no wet chemistry.</p>
+<p>Feature size is determined by beam diameter and positioning accuracy,
+not throughput. Writing a single substrate over days or weeks is
+entirely acceptable. With a well-designed column, good vacuum, and a
+stable slow-moving stage, features in the 1-2 micron range are
+achievable — late 1970s to early 1980s device capability, adequate for
+the application.</p>
+<p>The ion source feeds on solid dopant materials — boron from local
+boron-bearing mineral phases, phosphorus from local phosphate
+minerals.</p>
+<h3 id="i²l-process-integrated-injection-logic">6.5 I²L process —
+Integrated Injection Logic</h3>
+<p>I²L is chosen as the device architecture for reasons specific to this
+application:</p>
+<ul>
+<li>Merged PNP/NPN bipolar structure — the lateral PNP acts as a
+controlled current injector, while only NPN transistors perform logic
+switching and power functions. The merged geometry is more tolerant than
+CMOS, which requires separate isolated wells with precise lateral
+registration between N and P devices.</li>
+<li>Process tolerant — developed for dense low-power logic at 1970s
+geometries. Scales gracefully to the crude end.</li>
+<li>Power adjustable in operation — injection current sets the
+speed-power trade-off. Run slowly, power consumption is negligible.</li>
+<li>Power stages integrated into the same process — parallel arrays of
+ballasted transistors scale current handling with area. Logic and power
+drive on a single substrate from a single process run, with emitter
+ballast resistors defined by implant dose.</li>
+</ul>
+<h3 id="the-17-bit-architecture">6.6 The 17-bit architecture</h3>
+<p>The on-chip microprocessor targets a 17-bit data path and address
+space. The 17th bit serves three simultaneous roles:</p>
+<ul>
+<li>Carry and overflow in the ALU — inline with data, simplifying
+pipeline and enabling clean multi-word arithmetic</li>
+<li>Address space extension — 128K words directly addressable without
+bank switching complexity</li>
+<li>Parity — a 16-bit data word plus one parity bit fits exactly in 17
+bits, providing word-level integrity checking on every memory access at
+no additional bus width cost</li>
+</ul>
+<p>Parity is critical in the radiation environment. Word-level parity
+catches all single-bit upsets. A background memory scrubbing task checks
+every location periodically. Triple modular redundancy on the most
+critical registers — program counter, stack pointer, key control
+registers — provides majority-vote correction. Radiation hardening by
+architecture, requiring no special process steps.</p>
+<p>A 5mm × 5mm die at 1-2 micron geometry contains:</p>
+<ul>
+<li>CPU core with hardware multiply</li>
+<li>4KB implant-programmed ROM — firmware, boot code, calibration
+constants. Permanent, zero standby power.</li>
+<li>2-4KB static RAM</li>
+<li>32 I/O lines</li>
+<li>3 serial communication channels</li>
+<li>Timer and interrupt controller</li>
+<li>Power stage interfaces</li>
+<li>Integrated stacked capacitors</li>
+</ul>
+<p>The first locally produced microprocessor marks genuine semiconductor
+closure. It does not need to be good by terrestrial standards. It merely
+needs to be useful — capable of driving a motor, reading a sensor,
+executing a control loop. A crude device comparable to the late 1960s
+might already be sufficient to control the next generation of
+improvement. That threshold may be surprisingly low, and crossing it
+opens the path to progressive refinement.</p>
+<h3 id="integrated-stacked-capacitors">6.7 Integrated stacked
+capacitors</h3>
+<p>Stacked metal-insulator-metal capacitors are integrated directly onto
+the I²L die, built over field oxide regions using process steps already
+required for transistor fabrication. The stack is built layer by layer —
+time-unconstrained, as many layers as the application warrants.
+Capacitance scales with layer count over the same footprint, covering
+picofarads to tens of nanofarads for bypass, filtering, tank circuits,
+and interstage coupling — all on-chip.</p>
+<p>For bulk power storage where stacked on-chip capacitors cannot reach
+the required capacitance, polymer film capacitors serve: locally
+synthesised polyethylene or polypropylene film from Fischer-Tropsch,
+aluminium foil electrodes, wound as discrete components. Entirely vacuum
+compatible.</p>
+<h3 id="the-wcb-assembly-process">6.8 The WCB assembly process</h3>
+<p>Wired Circuit Board assembly — a serial robotic process using
+pre-formed wire interconnects compression-bonded to SMD component pads
+on a backing substrate — provides the electronics assembly capability.
+In the asteroid environment the process simplifies:</p>
+<ul>
+<li>No flux — vacuum prevents pad oxidation. Ion beam cleaning replaces
+flux for any pad surface requiring preparation.</li>
+<li>No atmosphere for electrical breakdown — geometric clearance alone
+suffices for many interconnects.</li>
+<li>No convection to disturb the assembly.</li>
+</ul>
+<hr />
+<h2 id="energy-generation-storage-and-management">7. Energy —
+Generation, Storage, and Management</h2>
+<h3 id="solar-generation">7.1 Solar generation</h3>
+<p>Solar panels are brought as part of the seed payload — silicon or
+GaAs photovoltaic, space-qualified, providing the primary power for all
+operations. As the semiconductor path matures, locally fabricated
+silicon photovoltaic cells become producible — the same float zone
+silicon, the same doping process, applied to a planar structure. Local
+solar panel production is an important closure milestone on par with the
+microprocessor milestone, eliminating the brought panel as a resupply
+item.</p>
+<p>The solar resource at 1AU is approximately 1.36 kW/m² — consistent
+and uninterrupted in orbit. On the surface, body rotation and shadowing
+create cycles that the orbital architecture avoids entirely.</p>
+<h3 id="electrical-storage">7.2 Electrical storage</h3>
+<p>Stacked MIM capacitors on-chip for local bypass and decoupling.
+Polymer film capacitors as discrete components for bulk power storage at
+module level.</p>
+<h3 id="mechanical-energy-storage">7.3 Mechanical energy storage</h3>
+<p>Mechanical energy storage is complementary to electrical storage for
+specific applications where chemical or electrical storage is
+inappropriate:</p>
+<p><strong>Flywheels</strong> — a spinning mass in hard vacuum on a
+magnetic bearing stores kinetic energy with very low loss rate. Locally
+producible permalloy magnetic bearings, local metal flywheel mass.
+Already used in spacecraft for attitude control and energy storage.</p>
+<p><strong>Springs</strong> — carbon steel spring stock from the local
+carburising process. Stores energy as elastic strain. Useful for
+one-shot actuators, emergency release mechanisms, and applications
+requiring guaranteed energy delivery independent of all electronics.</p>
+<p><strong>Compressed gas</strong> — gas compressed by solar-powered
+pump stored in local metal pressure vessels. Useful for pneumatic
+actuation where electrical drives are less suitable, and potentially as
+the surface-to-orbit launch mechanism.</p>
+<p>Mechanical storage requires no electrochemistry, no
+radiation-sensitive materials, and no temperature-dependent capacity
+degradation — properties that have real value for a long-lived
+autonomous system far from maintenance.</p>
+<hr />
+<h2 id="the-fleet-architecture">8. The Fleet Architecture</h2>
+<h3 id="multiple-landers">8.1 Multiple landers</h3>
+<p>The fabricator is not a single unit but a fleet of modular landers on
+the same body, potentially including both surface and orbital elements.
+Multiple units provide:</p>
+<ul>
+<li>Redundancy without per-unit duplication — a failed module replaced
+from the fleet spare pool rather than each unit carrying its own
+complete spare set</li>
+<li>Specialisation over time — units diverge as the ecosystem matures,
+division of labour at the unit level</li>
+<li>Incremental deployment — units launched sequentially as mission
+budget permits</li>
+<li>Graceful degradation — losing one unit reduces capability but does
+not end the mission</li>
+</ul>
+<h3 id="modularity-and-interface-standards">8.2 Modularity and interface
+standards</h3>
+<p>Every subsystem is a module with a standard interface. The interface
+standard — defined once in the seed payload as precision-made reference
+connectors, alignment fixtures, and coupling elements — propagates
+through the ecosystem because every locally fabricated replacement
+module is built to fit existing interfaces.</p>
+<p>The interface standard covers mechanical mounting, power, data,
+thermal, and fluid connections where applicable.</p>
+<p>Modules are physically compact and dense. The large volume elements
+of each unit — solar panels, concentrator mirrors, thermal radiators,
+anchoring structure, positioning stages — are mostly locally fabricated
+from early generations onward. Brought modules are small, dense,
+high-value items that travel between units as needed.</p>
+<h3 id="module-identity-and-linguistic-capability">8.3 Module identity
+and linguistic capability</h3>
+<p>Each module carries a permanently assigned identity — established at
+manufacture, immutable, unique across the fleet — with an associated
+history of every interaction, fault, and calibration event. A module
+moving between units brings its history to the new unit’s network.</p>
+<p>Each module has sufficient computational and linguistic capability to
+describe its own state, understand requests from dependent modules,
+reason about its own operational constraints, negotiate scheduling and
+resource allocation, detect and report anomalies, understand directly
+coupled modules sufficiently to coordinate without central direction,
+and escalate to the supervisory layer when a situation exceeds its
+reasoning capability.</p>
+<p>The network is peer-to-peer. The solar concentrator mirror arbitrates
+competing thermal requests by priority and schedule. The power module
+sheds non-critical loads in a power emergency without instruction from
+above. Coordination emerges from negotiation rather than central
+direction.</p>
+<p>The modular identity and linguistic architecture makes the system
+comprehensible and auditable by human visitors — a property that
+connects to the broader governance question of how a human presence
+might eventually relate to an established autonomous fabricator
+ecosystem.</p>
+<h3 id="the-mirror-as-a-shared-module">8.4 The mirror as a shared
+module</h3>
+<p>The solar concentrator mirror is not owned by any single process — it
+is a shared resource any thermal process module can request. As locally
+fabricated mirrors join the fleet they announce their capability and the
+network redistributes thermal load. The system self-configures as
+resources are added.</p>
+<h3 id="supervisory-layer-and-local-ai">8.5 Supervisory layer and local
+AI</h3>
+<p>The supervisory layer — described in section 5.2 — carries
+engineering reasoning capability substantially beyond module-level
+coordination. It maintains the fleet-wide view, manages Earth
+communication, handles novel situations, maintains the fleet registry of
+module identities and histories, and adapts the system’s development
+plan in response to what operations reveal about the specific body.</p>
+<p>Transparency and auditability are design requirements, not optional
+features. The supervisory AI must be able to explain its decisions to
+Earth in terms that allow human review and override. This is not merely
+a governance preference — it is the practical foundation of a workable
+relationship between an autonomous system operating at interplanetary
+distances and the human civilisation that deployed it.</p>
+<h3 id="anchoring">8.6 Anchoring</h3>
+<p>Anchoring is the first engineering problem the system must solve on
+arrival. Any mechanical operation exerting force on the body risks
+pushing the lander off the surface if reaction forces are not managed.
+The orbital architecture reduces the anchoring burden by keeping
+precision operations off the surface entirely. For surface operations,
+candidate approaches include harpoon anchors, screw anchors into
+consolidated material, and dead-weight anchoring. The detailed
+engineering depends heavily on the specific body’s surface properties
+and is a subject for the preliminary design phase.</p>
+<hr />
+<h2 id="communication-architecture">9. Communication Architecture</h2>
+<h3 id="the-orbital-relay">9.1 The orbital relay</h3>
+<p>An orbiting RF relay station serves as the communication hub for the
+fleet, co-located naturally with the orbital processing platform if that
+architecture is adopted. It separates the communication problem into two
+independently solvable parts:</p>
+<p>Surface to relay — short range, RF, simple. Milliwatt transmitters
+and omnidirectional antennas achieve high data rates without fine
+pointing on the surface units.</p>
+<p>Relay to Earth — long range, optical, sophisticated. All fine
+pointing and optical engineering concentrated in one well-engineered
+terminal serving the entire fleet.</p>
+<h3 id="the-laser-link">9.2 The laser link</h3>
+<p>GaN laser diodes — direct bandgap, emitting in the 400-500nm range —
+are the transmitter for the relay-to-Earth optical link. Silicon is not
+viable as a laser material: it is an indirect bandgap semiconductor with
+the conduction band minimum and valence band maximum at different points
+in k-space. A photon cannot bridge the momentum gap — phonon assistance
+is required, making stimulated emission orders of magnitude less
+probable than in a direct bandgap material. No engineering workaround
+exists for this constraint.</p>
+<p>GaN is chosen for radiation hardness — wide bandgap and strong bond
+energy confer significantly better resistance to the asteroid radiation
+environment than narrower gap III-V materials.</p>
+<p>Silicon PIN photodiodes serve as receivers — silicon absorption is
+efficient at GaN emission wavelengths. The receiver chain is locally
+fabricable once the semiconductor path matures.</p>
+<p>GaN laser diodes remain on the brought list indefinitely. This is the
+most benign remaining import dependency — grams per unit, years between
+replacements, clearly defined.</p>
+<h3 id="fine-pointing">9.3 Fine pointing</h3>
+<p>The relay’s optical terminal uses coarse gimbal pointing from
+ephemeris calculation and a fast steering mirror with quartz
+piezoelectric actuators driven by closed-loop feedback from a beacon
+detector. Crystalline quartz — SiO₂ in the appropriate cut orientation —
+is locally synthesisable.</p>
+<h3 id="earth-link-character">9.4 Earth link character</h3>
+<p>Light travel time at 1AU is approximately eight minutes each way. The
+link is episodic and store-and-forward. Earth cannot be in any
+operational loop. Every operational decision is made locally. The
+fleet’s autonomous operation is a physical necessity imposed by the
+speed of light.</p>
+<hr />
+<h2 id="unresolved-details-a-general-principle">10. Unresolved Details —
+A General Principle</h2>
+<p>The concept addresses principal subsystems and material dependencies
+in sufficient depth to establish feasibility. Many process details have
+not been individually resolved. The general answer follows the same
+logic throughout: a local production path exists using infrastructure
+already described, or a small brought stock covers the need at
+negligible mass cost, or a combination of both progressing from brought
+to local as the generational sequence advances.</p>
+<p>No individual detail of this class is expected to be a showstopper.
+The design discipline for each is to ask first whether a local solution
+exists, second whether an alternative material adequately serves, and
+third what the brought mass of a sufficient stock would be. A
+well-chosen stock covering all anticipated gaps is estimated to add
+5-10kg to the seed payload without changing the order-of-magnitude
+conclusion.</p>
+<hr />
+<h2 id="the-closure-map">11. The Closure Map</h2>
+<h3 id="closed-loops-industrial-closure">11.1 Closed loops — industrial
+closure</h3>
+<p>The following dependencies close locally within the early
+generational sequence:</p>
+<ul>
+<li>Structural metal — iron-nickel from magnetic separation, carbon
+steel from carburising ✓</li>
+<li>Wire and conductors — aluminium and silver from local mineral
+processing ✓</li>
+<li>Soft magnetics — permalloy from natural Fe-Ni ratio, carbonyl iron
+powder composites ✓</li>
+<li>Hard magnetics — cobalt ferrite sintered from local oxide minerals
+✓</li>
+<li>Insulators — silica glass, alumina, aluminosilicate ceramics, local
+polymers ✓</li>
+<li>Bearing surfaces — alumina, locally lapped with SiC abrasive ✓</li>
+<li>Polymers and organics — Fischer-Tropsch hydrocarbons, chlorocarbons,
+silicones ✓</li>
+<li>Capacitors — integrated stacked MIM on IC, polymer film for bulk
+storage ✓</li>
+<li>Surface preparation — hydrogen passivation, thermal desorption, ion
+beam cleaning, chlorine etch ✓</li>
+<li>Thermal management — local metal radiator panels and heat spreaders
+✓</li>
+<li>Energy generation — locally fabricated silicon PV closes at
+semiconductor milestone ✓</li>
+<li>Mechanical energy storage — flywheel, spring, compressed gas from
+local materials ✓</li>
+<li>Machine structure and tooling — local metal fabrication ✓</li>
+<li>Electronics assembly — WCB process ✓</li>
+</ul>
+<h3 id="closed-loops-semiconductor-closure">11.2 Closed loops —
+semiconductor closure</h3>
+<p>Achieved later, after industrial closure is established:</p>
+<ul>
+<li>Silicon devices — local I²L fabrication ✓</li>
+<li>Communication receiver — silicon photodiode ✓</li>
+<li>Solar panels — local silicon PV ✓</li>
+</ul>
+<h3 id="remaining-imports-at-maturity">11.3 Remaining imports at
+maturity</h3>
+<ul>
+<li>GaN laser diodes — fundamental material constraint. Grams per unit,
+years between replacements.</li>
+<li>Fluorine compounds — PTFE, used sparingly. Local fluorine from
+fluorapatite supplements brought stock.</li>
+<li>Seed tooling for new units — progressively replaced by local ceramic
+and metal tooling.</li>
+<li>Unresolved detail stock — specialist materials not individually
+enumerated at concept stage. Estimated 5-10kg aggregate.</li>
+</ul>
+<h3 id="the-resupply-cadence">11.4 The resupply cadence</h3>
+<p>At maturity a microsatellite-class resupply package every several
+years maintains full operational capability. The fleet does not depend
+on resupply for survival — only for gradual capability maintenance.</p>
+<hr />
+<h2 id="open-engineering-questions">12. Open Engineering Questions</h2>
+<p><strong>Silicon boron/phosphorus floor</strong> — residual boron and
+phosphorus after carbothermic reduction and multiple-pass microG float
+zone refining, and tolerance of I²L devices at 1-2 micron features to
+that background. The most critical open question in the semiconductor
+path.</p>
+<p><strong>Ion source dopant materials</strong> — performance of solid
+source ion guns with impure local chondritic feedstock. Reproducibility
+between source replacements and calibration procedure.</p>
+<p><strong>Copper catalyst for silicone synthesis</strong> — native
+copper concentrations against catalyst quantity required. Evaluation of
+zinc or tin alternatives if inadequate.</p>
+<p><strong>Regolith nitrogen and fluorine concentrations</strong> —
+determining local Si₃N₄ viability and PTFE supplement rate. Requires
+assay of actual target body regolith.</p>
+<p><strong>Microseismic environment</strong> — vibration amplitude
+during ion beam writing and whether passive isolation achieves 1-2
+micron feature stability.</p>
+<p><strong>Fischer-Tropsch product distribution</strong> — yield of
+useful polymer fractions from local feedstocks of characterised
+composition.</p>
+<p><strong>Chlorine etch characterisation</strong> — etch rate and
+selectivity of silicon in local chlorine at accessible conditions.</p>
+<p><strong>Stacked capacitor yield</strong> — achievable layer count and
+defect rate, and redundant cell count needed for adequate yield.</p>
+<p><strong>Surface cohesion</strong> — quantitative characterisation of
+the specific target body’s surface properties and implications for
+anchoring and the surface-orbit architecture trade.</p>
+<p><strong>Orbital stability</strong> — detailed analysis of orbital
+mechanics around the specific target body, station-keeping requirements,
+and attitude control budget.</p>
+<p><strong>Carbon budget</strong> — mass flow estimate from regolith
+processing to useful carbon, and adequacy for Fischer-Tropsch at the
+fabricator’s consumption rate. This is central to the polymer and
+lubricant chain and deserves quantitative treatment.</p>
+<p><strong>Anchoring</strong> — surface consolidation, anchor design,
+reaction force management. Heavily body-specific.</p>
+<p><strong>Stability</strong> — full geotechnical, dynamic, and thermal
+stability of the surface installation. A major engineering domain
+outside the scope of this document.</p>
+<hr />
+<h2 id="beyond-the-pioneer-a-trading-network">13. Beyond the Pioneer — A
+Trading Network</h2>
+<p>The single-body self-sufficient fabricator is the pioneer phase of a
+larger story, not its conclusion. Real industrial systems rarely stop at
+self-sufficiency. They specialise.</p>
+<p>On Earth no city insists on containing its own iron ore, bauxite,
+copper mines, oil fields, semiconductor fabs, and forests. Trade emerges
+because specialisation is more efficient. The same logic applies in
+space.</p>
+<p>As multiple fabricator installations develop across the near-Earth
+asteroid population, each body’s compositional character becomes an
+economic asset:</p>
+<p>M-type bodies — abundant in structural iron-nickel, cobalt,
+platinum-group metals. Natural exporters of refined structural metal and
+magnetic materials.</p>
+<p>S-type bodies — balanced composition supporting the full industrial
+stack. Natural producers of ceramics, electronics, and precision
+machinery.</p>
+<p>C-type bodies — rich in water, carbon, nitrogen compounds.
+Potentially the most strategically valuable bodies of all, supplying the
+volatiles that every other installation needs for chemistry, propulsion,
+and atmosphere.</p>
+<p>Copper, fluorine, ammonia — materials that a self-sufficient pioneer
+must manage carefully — become straightforward imports once a trading
+network exists. A nearby body with concentrated copper-bearing sulphides
+can export refined copper. A body with abundant fluorapatite can supply
+fluorine. A carbon-rich body can supply feedstock for Fischer-Tropsch
+chemistry across the network.</p>
+<p>This possibility substantially strengthens the overall concept. The
+closure requirements for the very first fabricator are stricter than
+those required of the mature industrial network that grows from it. The
+pioneer must be largely self-reliant because trade does not yet exist.
+Once enough installations are operating, many of the remaining
+irreducible imports cease to be imports from Earth at all — they become
+imports from elsewhere in the asteroid population.</p>
+<p>In this longer view the fabricator concept is not a proposal for an
+isolated self-replicating machine. It is the seed of an emergent solar
+system economy, in which specialisation, trade, and mutual dependence
+between installations progressively replace the self-sufficiency that
+was necessary only at the pioneer stage.</p>
+<hr />
+<h2 id="conclusion-space-as-a-designed-environment">14. Conclusion —
+Space as a Designed Environment</h2>
+<p>The exercise of working through a self-bootstrapping asteroid
+fabricator concept from first principles produces a result that
+surprises in its optimism. Not because the engineering is easy — it is
+not — but because the space environment, examined honestly rather than
+measured against terrestrial assumptions, turns out to contribute
+positively to several of the most critical process steps.</p>
+<p>Zone refining in microG is better than on Earth. Bonding in vacuum
+needs no flux. Surface preparation in vacuum replaces corrosive acid
+chemistry with cleaner alternatives. Vibration isolation without gravity
+is more effective. The vacuum process environment eliminates oxidation
+chemistry that terrestrial processes must constantly manage. Solar
+energy provides heat for sintering, annealing, and zone refining without
+a fuel supply chain. Contamination in vacuum travels ballistic paths
+rather than mixing everywhere — industrial zoning is cleaner, not
+harder. The radiation environment drives an architectural response — the
+17-bit parity architecture — that makes the processor more robust than a
+conventional design would be.</p>
+<p>The instinct to treat space as hostile comes from measuring it
+against Earth conditions as a baseline. Earth conditions are not the
+natural baseline for technology — they are the conditions under which
+technology evolved by historical accident. A technology designed from
+first principles for the space environment looks different, and in
+several important respects works better.</p>
+<p>The asteroid fabricator concept developed here is not a terrestrial
+factory heroically surviving in a hostile environment. It is a system
+that makes more sense in space than it would on Earth — shaped by its
+environment in ways that are often advantageous, building on local
+materials that the environment provides, and closing its dependencies on
+Earth one by one through a generational sequence that has internal logic
+and no discontinuous leaps.</p>
+<p>This optimism rests on a foundation. The concept does not start from
+ignorance. It inherits centuries of accumulated scientific and
+engineering knowledge — metallurgy, chemistry, semiconductor physics,
+vacuum technology, systems architecture — knowledge that was hard-won by
+generations of researchers and practitioners. The fabricator solves a
+different and easier problem than the pioneers faced because it begins
+already knowing what they had to discover. Acknowledging that
+inheritance is not false modesty. It is the accurate account of why the
+concept is plausible.</p>
+<p>The irreducible import list at maturity — GaN laser diodes, PTFE used
+sparingly, a small stock of specialist materials — is light enough to
+sustain with occasional resupply. The fleet is functionally autonomous.
+And in the longer arc, even these imports may be sourced from within a
+growing solar system economy rather than from Earth.</p>
+<p>What remains is the practical testing. Laboratory analogue
+experiments on the key process steps, material characterisation of
+actual chondritic samples, precursor characterisation of a specific
+target body, and quantitative answers to the open engineering questions
+listed above. The concept provides a coherent framework for that
+experimental programme. The framework holds together. Whether reality
+matches it in every particular is the question that only experiment can
+answer.</p>
+<p>That is the correct next step.</p>
+<hr />
+<h2 id="appendix-the-minimum-seed-payload">Appendix — The Minimum Seed
+Payload</h2>
+<p>A preliminary estimate, subject to revision as the concept develops.
+The 18kg figure represents a lower bound for the concept — a practical
+first mission should budget 50-200kg to accommodate the full
+instrumentation, metrology, robotic systems, spare electronics, sensors,
+wiring, and actuators required for real operations. The order of
+magnitude — tens to low hundreds of kilograms rather than thousands — is
+the robust result, and the ratio between seed mass and ultimate
+capability is the argument that matters.</p>
+<p>A further observation on lifetime autonomy: the entire residual
+import list at maturity — GaN laser diodes, PTFE stock, specialist
+materials, precision consumables — almost certainly fits within an
+additional 50kg carried at launch. A system that brings its own lifetime
+supply of residual dependencies from the outset is not functionally
+dependent on Earth resupply at all. The resupply cadence drops from
+every few years to essentially never. The total mission mass — seed
+fabricator plus lifetime consumables — remains within the capability of
+a single dedicated smallsat-class launch. This reframes the concept: not
+a system that remains tenuously connected to Earth by a supply chain,
+but a genuinely self-contained outpost that carries everything it will
+ever need in a payload of modest total mass.</p>
+<p><strong>Precision tooling</strong> — draw plate dies, bonding tool
+tips, interface standard reference elements, lapping fixtures. Mass:
+~2kg.</p>
+<p><strong>Silicon devices</strong> — microcontrollers, motor drivers,
+sensor ICs, power management, communication ICs for initial fleet
+operation. Mass: ~3kg.</p>
+<p><strong>Solar panels</strong> — brought photovoltaic panels for
+primary power before local silicon PV production. Mass: ~3kg.</p>
+<p><strong>GaN laser diodes</strong> — primary and spares for
+communication modules. Mass: ~0.1kg.</p>
+<p><strong>PTFE stock</strong> — sheet, rod, tape, tubing. Mass:
+~1kg.</p>
+<p><strong>MoS₂ dry film</strong> — applied to precision bearing
+surfaces. Mass: ~0.2kg.</p>
+<p><strong>Precision bearing sets</strong> — for highest-precision axes
+before local alumina bearing production. Mass: ~1kg.</p>
+<p><strong>Seed electronics</strong> — ion beam column control, initial
+WCB assembly controller, LAN infrastructure components. Mass: ~2kg.</p>
+<p><strong>Reference standards</strong> — calibration masses,
+dimensional references, wavelength reference for interferometric
+metrology. Mass: ~0.5kg.</p>
+<p><strong>Unresolved detail stock</strong> — refined materials and
+specialist components covering process details not individually resolved
+at concept stage. Mass: ~5kg.</p>
+<p><strong>Concept lower bound: ~18kg</strong> <strong>Practical first
+mission estimate: 50-200kg</strong></p>
+<p>The difference between the lower bound and the practical estimate is
+instrumentation, metrology, robotic actuation, spare electronics,
+sensors, and wiring — all real requirements for an operational system
+that are implied by the concept but not individually enumerated at this
+stage.</p>
+<hr />
+<h2 id="change-log">Change Log</h2>
+<p><strong>v1.2</strong> — Added preface framing the document as
+technical appendix to spaceaccord.org and stating the AI collaboration
+clearly. Corrected I²L transistor description: merged PNP/NPN structure
+with lateral PNP as current injector and NPN performing all logic and
+power switching. Added lifetime autonomy observation to appendix:
+residual import dependencies fit within ~50kg additional payload, making
+the system genuinely self-contained from launch. Updated change log.</p>
+<p><strong>v1.1</strong> — Added section 1.1 The inheritance of
+knowledge, including the role of AI assistance. Separated semiconductor
+closure from industrial closure as distinct milestones, acknowledging
+they may be decades apart (section 6 introduction). Added section 5
+Surface and orbital architecture covering the surface-orbit trade,
+crumbly body considerations, industrial zoning in vacuum, and
+body-specific planning as a structural requirement for local AI.
+Expanded supervisory layer discussion to include engineering reasoning
+capability and the governance requirement for transparency and
+auditability. Added section 13 Beyond the Pioneer — A Trading Network
+covering specialisation by body type and the transition from
+self-sufficiency to trade. Revised seed payload discussion to present
+18kg as a lower bound with 50-200kg as a practical first mission
+estimate. Added carbon budget, surface cohesion, and orbital stability
+to open engineering questions. Minor corrections and clarifications
+throughout.</p>
+<p><strong>v1.0</strong> — Added body selection physical criteria,
+energy section, anchoring subsection. Revised capacitors to stacked MIM
+and polymer film only. Revised seed payload to ~18kg.</p>
+<p><strong>v0.2</strong> — Added surface preparation, capacitors,
+unresolved details principle. Revised seed payload from ~10kg to
+~15kg.</p>
+<p><strong>v0.1</strong> — Initial concept document.</p>
+<hr />
+<p><em>This document represents the current state of a concept developed
+through extended technical discussion and collegial review. It is a
+starting point for detailed engineering investigation, not a finished
+design. The authors welcome engagement from researchers and engineers
+with relevant expertise in any of the subsystems described.</em></p>
+<p><em>Gregory Eckersley — spaceaccord.org</em> <em>June 2026</em></p>
+</body>
+</html>
